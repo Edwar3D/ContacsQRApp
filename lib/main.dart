@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:qr_app/models/contac.dart';
 import 'package:qr_app/pages/generator_qr.dart';
+import 'package:qr_app/services/contact_services.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: GeneratorQR(),
+      home: MyHomePage(title: "Test"),
     );
   }
 }
@@ -27,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final contactService = ContactServices();
   int _counter = 0;
 
   void _incrementCounter() {
@@ -80,7 +83,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          contactService.saveContact(new Contac(
+              name: "TuNombre",
+              lastName: "TuApellido",
+              number: "1111111111",
+              email: "TuEmail"));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Contacto agregado')));
+        },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
