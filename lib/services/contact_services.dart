@@ -1,15 +1,8 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_app/models/contac.dart';
 
 class ContactServices {
-  void saveContact(Contac contac) async {
-    Contact contact = Contact(
-        givenName: contac.name,
-        familyName: contac.lastName,
-        emails: [Item(value: contac.email)],
-        phones: [Item(value: contac.number)]);
-
+  void saveContact(Contact contact) async {
     if (await Permission.contacts.request().isGranted) {
       try {
         await ContactsService.addContact(contact);

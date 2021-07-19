@@ -1,81 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class GeneratorQR extends StatefulWidget {
-  const GeneratorQR({Key? key}) : super(key: key);
+class GeneratorQR extends StatelessWidget {
+  final Contact myContact;
+  const GeneratorQR({Key? key, required this.myContact}) : super(key: key);
 
-  @override
-  _GeneratorQRState createState() => _GeneratorQRState();
-}
-
-class _GeneratorQRState extends State<GeneratorQR> {
-  TextEditingController nameController = new TextEditingController();
-  TextEditingController numberController = new TextEditingController();
-  TextEditingController mailController = new TextEditingController();
+  getData() {
+    String json = jsonEncode(myContact.toMap());
+    print(json);
+    return json.replaceAll('avatar', 'oll');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gengerador de QR'),
+        automaticallyImplyLeading: true,
       ),
       body: Container(
         padding: EdgeInsets.all(25),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Form(
-                  child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      /* prefixIcon: Icon(
-                        Icons.email,
-                        color: Colors.deepPurpleAccent.shade100,
-                      ), */
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      labelText: 'Nombre',
-                    ),
-                  ),
-                  TextFormField(
-                    controller: numberController,
-                    decoration: InputDecoration(
-                      /* prefixIcon: Icon(
-                        Icons.email,
-                        color: Colors.deepPurpleAccent.shade100,
-                      ), */
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      labelText: 'Nombre',
-                    ),
-                  ),
-                  TextFormField(
-                    controller: mailController,
-                    decoration: InputDecoration(
-                      /* prefixIcon: Icon(
-                        Icons.email,
-                        color: Colors.deepPurpleAccent.shade100,
-                      ), */
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      labelText: 'Correo',
-                    ),
-                  ),
-                  TextButton(
-                    child: Text('Generar QR'),
-                    onPressed: () {},
-                  )
-                ],
-              )),
-              QrImage(
-                data: '{"name": Eduardo, "number": 987989  }',
-                version: QrVersions.auto,
-                size: 320,
-                gapless: false,
-              )
-            ],
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text('Compartir datos de: ${myContact.displayName}'),
+                SizedBox(height: 25),
+                Text('Escane este código QR'),
+                QrImage(
+                  data: getData(),
+                  version: QrVersions.auto,
+                  size: 320,
+                  gapless: false,
+                )
+              ],
+            ),
           ),
         ),
       ),
