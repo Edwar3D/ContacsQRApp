@@ -103,10 +103,10 @@ class _ScannerQRState extends State<ScannerQR> {
   Widget dataScanner() {
     String data = '';
     bool isContac = false;
-    if (result != null) {
-      try {
-        print(jsonDecode(result!.code));
 
+    if (result != null) {
+      print(jsonDecode(result!.code));
+      try {
         Contact contact = Contact.fromMap(jsonDecode(result!.code));
         print(contact.toMap());
         isContac = true;
@@ -118,8 +118,8 @@ class _ScannerQRState extends State<ScannerQR> {
         return TextButton(
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ViewContac(
-                      contac: Contact.fromMap(jsonDecode(result!.code)))));
+                  builder: (context) => ViewContact(
+                      contact: Contact.fromMap(jsonDecode(result!.code)))));
             },
             child: Text('Ver contacto'));
       else

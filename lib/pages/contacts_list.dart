@@ -22,7 +22,7 @@ class _ContactsListState extends State<ContactsList> {
   Future<void> _askPermissions() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
-      print('persisongranted');
+      print('granted');
       refreshContacts();
     } else {
       _handleInvalidPermissions(permissionStatus);
@@ -56,7 +56,6 @@ class _ContactsListState extends State<ContactsList> {
     var contacts = (await ContactsService.getContacts(
             withThumbnails: false, iOSLocalizedLabels: false))
         .toList();
-
     setState(() {
       _contacts = contacts;
     });
