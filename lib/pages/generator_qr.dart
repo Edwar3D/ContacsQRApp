@@ -11,7 +11,7 @@ class GeneratorQR extends StatelessWidget {
   getData() {
     String json = jsonEncode(myContact.toMap());
     print(json);
-    return json.replaceAll('avatar', 'null');
+    return json.replaceAll('avatar', 'null').replaceAll('identifier', 'null');
   }
 
   @override

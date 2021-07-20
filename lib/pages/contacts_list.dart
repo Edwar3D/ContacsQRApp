@@ -3,6 +3,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:qr_app/pages/generator_qr.dart';
 import 'package:qr_app/pages/scanner.dart';
+import 'package:qr_app/pages/view_contact.dart';
 
 class ContactsList extends StatefulWidget {
   const ContactsList({Key? key}) : super(key: key);
@@ -78,7 +79,11 @@ class _ContactsListState extends State<ContactsList> {
                   return ListTile(
                     onTap: () {
                       print(c.displayName);
-                      shareContact(c);
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ViewContact(
+                                contact: c,
+                                isNewContact: false,
+                              )));
                     },
                     leading: CircleAvatar(child: Icon(Icons.person)),
                     title: Text(c.displayName ?? ""),
@@ -107,47 +112,5 @@ class _ContactsListState extends State<ContactsList> {
       var id = _contacts.indexWhere((c) => c.identifier == contact.identifier);
       _contacts[id] = contact;
     });
-  }
-
-  Future<void> shareContact(Contact contact) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Compatir Contacto', textAlign: TextAlign.center),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('¿Quieres Compatir el contacto?',
-                    textAlign: TextAlign.center),
-                Text(
-                    '\nEscanee el código QR con nuestra aplicación para que se agrege el contacto',
-                    textAlign: TextAlign.left),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-                child: Text('Cancelar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                }),
-            TextButton(
-              child: const Text('Aceptar'),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GeneratorQR(
-                        myContact: contact,
-                      ),
-                    )).then((value) => Navigator.pop(context));
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }

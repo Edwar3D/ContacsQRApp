@@ -119,7 +119,9 @@ class _ScannerQRState extends State<ScannerQR> {
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => ViewContact(
-                      contact: Contact.fromMap(jsonDecode(result!.code)))));
+                        contact: Contact.fromMap(jsonDecode(result!.code)),
+                        isNewContact: true,
+                      )));
             },
             child: Text('Ver contacto'));
       else

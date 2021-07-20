@@ -3,25 +3,26 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_app/pages/contacts_list.dart';
+import 'package:qr_app/pages/generator_qr.dart';
 import 'package:qr_app/services/contact_services.dart';
 
 class ViewContact extends StatelessWidget {
   final Contact contact;
-  const ViewContact({Key? key, required this.contact}) : super(key: key);
+  final bool isNewContact;
+  const ViewContact(
+      {Key? key, required this.contact, required this.isNewContact})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     print(contact.toMap().toString());
+    String _title = '';
+    if (isNewContact) _title = 'Nuevo Contacto';
+
     return Scaffold(
         appBar: AppBar(
-          title: Text('Nuevo contactto'),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  shareContact(context);
-                },
-                icon: Icon(Icons.save))
-          ],
+          title: Text(_title),
+          actions: [_buildIAction(context)],
         ),
         body: Container(
           padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
@@ -44,37 +45,37 @@ class ViewContact extends StatelessWidget {
                         enabled: false,
                       ),
                       ListTile(
-                        title: Text("Name"),
+                        title: Text("Nombre"),
                         trailing: Text(contact.givenName ?? ""),
                       ),
                       ListTile(
-                        title: Text("Middle name"),
+                        title: Text("Segundo nombre"),
                         trailing: Text(contact.middleName ?? ""),
                       ),
                       ListTile(
-                        title: Text("Family name"),
+                        title: Text("Apellido"),
                         trailing: Text(contact.familyName ?? ""),
                       ),
                       ListTile(
-                        title: Text("Prefix"),
+                        title: Text("Prefijo"),
                         trailing: Text(contact.prefix ?? ""),
                       ),
                       ListTile(
-                        title: Text("Suffix"),
+                        title: Text("Sufijo"),
                         trailing: Text(contact.suffix ?? ""),
                       ),
                       ListTile(
-                        title: Text("Birthday"),
+                        title: Text("Cumpleaños"),
                         trailing: Text(contact.birthday != null
                             ? DateFormat('dd-MM-yyyy').format(contact.birthday!)
                             : ""),
                       ),
                       ListTile(
-                        title: Text("Company"),
+                        title: Text("Empresa"),
                         trailing: Text(contact.company ?? ""),
                       ),
                       ListTile(
-                        title: Text("Job"),
+                        title: Text("Trabajo"),
                         trailing: Text(contact.jobTitle ?? ""),
                       ),
                       Text('Teléfono:'),
@@ -128,23 +129,23 @@ class ViewContact extends StatelessWidget {
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(
-                                        title: Text("Street"),
+                                        title: Text("Calle"),
                                         trailing: Text(a.street ?? ""),
                                       ),
                                       ListTile(
-                                        title: Text("Postcode"),
+                                        title: Text("Código postal"),
                                         trailing: Text(a.postcode ?? ""),
                                       ),
                                       ListTile(
-                                        title: Text("City"),
+                                        title: Text("Ciudad"),
                                         trailing: Text(a.city ?? ""),
                                       ),
                                       ListTile(
-                                        title: Text("Region"),
+                                        title: Text("Región"),
                                         trailing: Text(a.region ?? ""),
                                       ),
                                       ListTile(
-                                        title: Text("Country"),
+                                        title: Text("País"),
                                         trailing: Text(a.country ?? ""),
                                       ),
                                     ],
@@ -161,7 +162,23 @@ class ViewContact extends StatelessWidget {
         ));
   }
 
-  Future<void> shareContact(BuildContext context) async {
+  IconButton _buildIAction(BuildContext context) {
+    if (isNewContact) {
+      return IconButton(
+          onPressed: () {
+            saveContact(context);
+          },
+          icon: Icon(Icons.save));
+    } else {
+      return IconButton(
+          onPressed: () {
+            shareContact(context);
+          },
+          icon: Icon(Icons.share));
+    }
+  }
+
+  Future<void> saveContact(BuildContext context) async {
     ContactServices contactServices = new ContactServices();
 
     return showDialog<void>(
@@ -196,6 +213,7 @@ class ViewContact extends StatelessWidget {
                       gravity: ToastGravity.BOTTOM,
                       backgroundColor: Colors.green.shade400,
                       textColor: Colors.white);
+                  Navigator.pop(context);
                 } catch (e) {
                   Fluttertoast.showToast(
                       msg: 'Hubo un error al añadir contacto',
@@ -204,11 +222,49 @@ class ViewContact extends StatelessWidget {
                       backgroundColor: Colors.red.shade300,
                       textColor: Colors.white);
                 }
-                Navigator.pushReplacement(
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> shareContact(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Compatir Contacto', textAlign: TextAlign.center),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('¿Quieres Compatir el contacto?',
+                    textAlign: TextAlign.center),
+                Text(
+                    '\nEscanee el código QR con nuestra aplicación para que se agrege el contacto',
+                    textAlign: TextAlign.left),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+                child: Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: () {
+                Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ContactsList(),
-                    ));
+                      builder: (context) => GeneratorQR(
+                        myContact: contact,
+                      ),
+                    )).then((value) => Navigator.pop(context));
               },
             ),
           ],
