@@ -22,8 +22,14 @@ class GeneratorQR extends StatelessWidget {
         : 325.0;
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Color.fromRGBO(0, 0, 0, 0),
         automaticallyImplyLeading: true,
-        title: Text('Código QR'),
+        centerTitle: true,
+        title: Text(
+          'Código QR',
+          style: Theme.of(context).textTheme.headline2,
+        ),
       ),
       body: Container(
         padding: EdgeInsets.all(25),
@@ -33,7 +39,7 @@ class GeneratorQR extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text('Compartir datos de: ${myContact.displayName}'),
-                SizedBox(height: 10),
+                SizedBox(height: 15),
                 Center(
                   child: QrImage(
                       /*  embeddedImage: AssetImage('assets/images/cheems.png'),
@@ -55,7 +61,7 @@ class GeneratorQR extends StatelessWidget {
                         );
                       }),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 25),
                 Text(
                     'Comparte este código QR y con nuestra aplicacón podra visulizar su contacto'),
               ],

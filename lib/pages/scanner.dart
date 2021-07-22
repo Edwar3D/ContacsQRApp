@@ -29,9 +29,23 @@ class _ScannerQRState extends State<ScannerQR> {
 
   @override
   Widget build(BuildContext context) {
+    var styleTxtButton = TextButton.styleFrom(
+        primary: Colors.white,
+        fixedSize: Size(40, 60),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        backgroundColor: Colors.blue.shade800);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Escanear nuevo Contacto'),
+        centerTitle: true,
+        toolbarHeight: 70,
+        backgroundColor: Color.fromRGBO(0, 0, 0, 0),
+        title: Text(
+          'Escanear QR',
+          style: Theme.of(context).textTheme.headline2,
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,6 +58,7 @@ class _ScannerQRState extends State<ScannerQR> {
               Container(
                 margin: EdgeInsets.all(8),
                 child: TextButton(
+                    style: styleTxtButton,
                     onPressed: () async {
                       await controller?.toggleFlash();
                       setState(() {});
@@ -54,13 +69,17 @@ class _ScannerQRState extends State<ScannerQR> {
                         if (snapshot.data == true)
                           return Icon(Icons.flashlight_on_outlined);
                         else
-                          return Icon(Icons.flashlight_off_outlined);
+                          return Icon(
+                            Icons.flashlight_off_outlined,
+                          );
                       },
                     )),
               ),
+              SizedBox(width: 50),
               Container(
                 margin: EdgeInsets.all(8),
                 child: TextButton(
+                    style: styleTxtButton,
                     onPressed: () async {
                       await controller?.flipCamera();
                       setState(() {});
@@ -105,29 +124,40 @@ class _ScannerQRState extends State<ScannerQR> {
     bool isContac = false;
 
     if (result != null) {
-      print(jsonDecode(result!.code));
+      print('-----------${result!.code}');
       try {
         Contact contact = Contact.fromMap(jsonDecode(result!.code));
         print(contact.toMap());
         isContac = true;
       } catch (e) {
-        data = 'dksld';
-        print(isContac);
+        data = 'Contacto no encontrado en Código QR';
       }
       if (isContac)
         return TextButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ViewContact(
-                        contact: Contact.fromMap(jsonDecode(result!.code)),
-                        isNewContact: true,
-                      )));
-            },
-            child: Text('Ver contacto'));
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ViewContact(
+                      contact: Contact.fromMap(jsonDecode(result!.code)),
+                      isNewContact: true,
+                    )));
+          },
+          child: Text(
+            'Ver contacto',
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          style: TextButton.styleFrom(
+              primary: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              backgroundColor: Colors.blue.shade800),
+        );
       else
-        return Text(data);
+        return Text(
+          data,
+        );
     } else
-      return Text('Escaneando');
+      return Text('Escaneando', style: Theme.of(context).textTheme.bodyText1);
   }
 
   Widget _buildQrView(BuildContext context) {

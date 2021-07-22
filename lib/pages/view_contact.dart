@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:qr_app/pages/contacts_list.dart';
 import 'package:qr_app/pages/generator_qr.dart';
 import 'package:qr_app/services/contact_services.dart';
 
@@ -16,12 +15,17 @@ class ViewContact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(contact.toMap().toString());
-    String _title = '';
+    String _title = 'Información';
     if (isNewContact) _title = 'Nuevo Contacto';
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(_title),
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(0, 0, 0, 0),
+          title: Text(
+            _title,
+            style: Theme.of(context).textTheme.headline2,
+          ),
           actions: [_buildIAction(context)],
         ),
         body: Container(
@@ -33,53 +37,99 @@ class ViewContact extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Center(
-                    heightFactor: 2,
+                    heightFactor: 1.5,
                     child: CircleAvatar(
-                        child: Icon(Icons.person, size: 100), radius: 60),
+                        backgroundImage:
+                            AssetImage('assets/images/profile.png'),
+                        radius: 90),
                   ),
                   Form(
                       child: Column(
                     children: <Widget>[
-                      TextFormField(
-                        initialValue: contact.displayName,
-                        enabled: false,
+                      ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            color: Color.fromRGBO(46, 134, 193, 1),
+                            child: TextFormField(
+                              initialValue: contact.displayName,
+                              enabled: false,
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                          )),
+                      Container(
+                          color: Colors.grey.shade200,
+                          child: Column(children: [
+                            buildListTile(context, 'Nombre', contact.givenName),
+                            buildListTile(
+                                context, 'Segundo nombre', contact.middleName),
+                            buildListTile(
+                                context, 'Apellido', contact.familyName),
+                            buildListTile(context, 'Prefijo', contact.prefix),
+                            buildListTile(context, 'Sufijo', contact.suffix),
+                            buildListBithday(
+                                context, 'Cumpleaño', contact.birthday),
+                            buildListTile(context, 'Empresa', contact.company),
+                            buildListTile(context, 'Trabajo', contact.jobTitle),
+                          ])),
+                      ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            color: Color.fromRGBO(46, 134, 193, 1),
+                            child: TextFormField(
+                              initialValue: 'Teléfono:',
+                              enabled: false,
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                          )),
+                      Container(
+                        color: Colors.grey.shade200,
+                        child: Column(
+                            children: contact.phones!
+                                .map(
+                                  (i) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: ListTile(
+                                      title: Text(
+                                        i.label ?? "",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline4,
+                                      ),
+                                      trailing: Text(i.value ?? "",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1),
+                                    ),
+                                  ),
+                                )
+                                .toList()),
                       ),
-                      ListTile(
-                        title: Text("Nombre"),
-                        trailing: Text(contact.givenName ?? ""),
-                      ),
-                      ListTile(
-                        title: Text("Segundo nombre"),
-                        trailing: Text(contact.middleName ?? ""),
-                      ),
-                      ListTile(
-                        title: Text("Apellido"),
-                        trailing: Text(contact.familyName ?? ""),
-                      ),
-                      ListTile(
-                        title: Text("Prefijo"),
-                        trailing: Text(contact.prefix ?? ""),
-                      ),
-                      ListTile(
-                        title: Text("Sufijo"),
-                        trailing: Text(contact.suffix ?? ""),
-                      ),
-                      ListTile(
-                        title: Text("Cumpleaños"),
-                        trailing: Text(contact.birthday != null
-                            ? DateFormat('dd-MM-yyyy').format(contact.birthday!)
-                            : ""),
-                      ),
-                      ListTile(
-                        title: Text("Empresa"),
-                        trailing: Text(contact.company ?? ""),
-                      ),
-                      ListTile(
-                        title: Text("Trabajo"),
-                        trailing: Text(contact.jobTitle ?? ""),
-                      ),
-                      Text('Teléfono:'),
-                      Column(
+                      ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            color: Color.fromRGBO(46, 134, 193, 1),
+                            child: TextFormField(
+                              initialValue: 'Emails:',
+                              enabled: false,
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                          )),
+                      Container(
+                        color: Colors.grey.shade200,
+                        child: Column(
                           children: contact.emails!
                               .map(
                                 (i) => Padding(
@@ -91,67 +141,57 @@ class ViewContact extends StatelessWidget {
                                   ),
                                 ),
                               )
-                              .toList()),
-                      Column(
-                        children: contact.phones!
-                            .map(
-                              (i) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: ListTile(
-                                  title: Text(i.label ?? ""),
-                                  trailing: Text(i.value ?? ""),
-                                ),
-                              ),
-                            )
-                            .toList(),
+                              .toList(),
+                        ),
                       ),
-                      Column(
-                        children: contact.emails!
-                            .map(
-                              (i) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: ListTile(
-                                  title: Text(i.label ?? ""),
-                                  trailing: Text(i.value ?? ""),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      Text('Direcciones'),
-                      Column(
-                        children: contact.postalAddresses!
-                            .map((a) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Column(
-                                    children: <Widget>[
-                                      ListTile(
-                                        title: Text("Calle"),
-                                        trailing: Text(a.street ?? ""),
-                                      ),
-                                      ListTile(
-                                        title: Text("Código postal"),
-                                        trailing: Text(a.postcode ?? ""),
-                                      ),
-                                      ListTile(
-                                        title: Text("Ciudad"),
-                                        trailing: Text(a.city ?? ""),
-                                      ),
-                                      ListTile(
-                                        title: Text("Región"),
-                                        trailing: Text(a.region ?? ""),
-                                      ),
-                                      ListTile(
-                                        title: Text("País"),
-                                        trailing: Text(a.country ?? ""),
-                                      ),
-                                    ],
-                                  ),
-                                ))
-                            .toList(),
+                      ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            color: Color.fromRGBO(46, 134, 193, 1),
+                            child: TextFormField(
+                              initialValue: 'Dirreciones:',
+                              enabled: false,
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                          )),
+                      Container(
+                        color: Colors.grey.shade200,
+                        child: Column(
+                          children: contact.postalAddresses!
+                              .map((a) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          title: Text("Calle"),
+                                          trailing: Text(a.street ?? ""),
+                                        ),
+                                        ListTile(
+                                          title: Text("Código postal"),
+                                          trailing: Text(a.postcode ?? ""),
+                                        ),
+                                        ListTile(
+                                          title: Text("Ciudad"),
+                                          trailing: Text(a.city ?? ""),
+                                        ),
+                                        ListTile(
+                                          title: Text("Región"),
+                                          trailing: Text(a.region ?? ""),
+                                        ),
+                                        ListTile(
+                                          title: Text("País"),
+                                          trailing: Text(a.country ?? ""),
+                                        ),
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
                       ),
                     ],
                   ))
@@ -160,6 +200,35 @@ class ViewContact extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  bool _isVisible(bool value) {
+    return value ? false : true;
+  }
+
+  Widget buildListTile(BuildContext context, String tittle, String? data) {
+    if (data != null)
+      return ListTile(
+        title: Text(
+          tittle,
+          style: Theme.of(context).textTheme.headline4,
+        ),
+        trailing: Text(data, style: Theme.of(context).textTheme.bodyText1),
+      );
+    else
+      return Container();
+  }
+
+  Widget buildListBithday(BuildContext context, String tittle, DateTime? data) {
+    if (data != null)
+      return ListTile(
+        title: Text("Cumpleaños"),
+        trailing: Text(contact.birthday != null
+            ? DateFormat('dd-MM-yyyy').format(contact.birthday!)
+            : ""),
+      );
+    else
+      return Container();
   }
 
   IconButton _buildIAction(BuildContext context) {

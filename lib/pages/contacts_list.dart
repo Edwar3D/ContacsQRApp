@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:qr_app/pages/generator_qr.dart';
 import 'package:qr_app/pages/scanner.dart';
 import 'package:qr_app/pages/view_contact.dart';
 
@@ -66,13 +65,16 @@ class _ContactsListState extends State<ContactsList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 70,
         title: Text(
-          'Lista de contactos',
+          'Contactos',
+          style: Theme.of(context).textTheme.headline1,
         ),
       ),
       body: SafeArea(
         child: _contacts != null
             ? ListView.builder(
+                padding: EdgeInsets.fromLTRB(20, 0, 25, 0),
                 itemCount: _contacts.length,
                 itemBuilder: (BuildContext context, int index) {
                   Contact c = _contacts.elementAt(index);
@@ -86,6 +88,7 @@ class _ContactsListState extends State<ContactsList> {
                               )));
                     },
                     leading: CircleAvatar(child: Icon(Icons.person)),
+                    visualDensity: VisualDensity(horizontal: 3),
                     title: Text(c.displayName ?? ""),
                   );
                 },
@@ -105,12 +108,5 @@ class _ContactsListState extends State<ContactsList> {
         },
       ),
     );
-  }
-
-  void contactOnDeviceHasBeenUpdated(Contact contact) {
-    this.setState(() {
-      var id = _contacts.indexWhere((c) => c.identifier == contact.identifier);
-      _contacts[id] = contact;
-    });
   }
 }
